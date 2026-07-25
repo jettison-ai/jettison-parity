@@ -1,0 +1,55 @@
+{
+  "name": "slack_read_channel",
+  "description": "This tool allows you to read recent message history from a Slack channel, newest first, including thread parent messages but not their replies. Use this tool to catch up on a discussion or find a specific message. History access is limited by the workspace plan retention window. Bot and app messages are included and marked with their bot_id so you can distinguish them from human messages.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/slack_read_channel.json",
+    "title": "Input for slack_read_channel",
+    "type": "object",
+    "properties": {
+      "channel": {
+        "type": "object",
+        "title": "Channel reference",
+        "description": "Reference to a Slack conversation. Provide either the channel id (preferred, stable across renames) or the human-readable channel name.",
+        "properties": {
+          "channel_id": {
+            "type": "string",
+            "description": "The unique conversation id, e.g. C0123456789. Stable across channel renames."
+          },
+          "channel_name": {
+            "type": "string",
+            "description": "Human readable channel name without the leading hash sign."
+          }
+        },
+        "additionalProperties": false
+      },
+      "oldest": {
+        "type": "string",
+        "description": "Only return messages after this Unix timestamp, e.g. 1719430000.000000."
+      },
+      "pagination": {
+        "type": "object",
+        "title": "Pagination options",
+        "description": "Standard cursor-based pagination controls shared by every list endpoint in this server.",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation cursor returned in the previous page of results. Omit for the first page."
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "Number of items to return per page. The server clamps values above the maximum.",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 30
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "channel"
+    ],
+    "additionalProperties": false
+  }
+}

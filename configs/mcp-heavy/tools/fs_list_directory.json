@@ -1,0 +1,44 @@
+{
+  "name": "fs_list_directory",
+  "description": "This tool allows you to list the entries of a directory on the local filesystem, distinguishing files from subdirectories and reporting sizes in bytes. Use this tool to explore project structure before reading specific files. Entries are returned in lexicographic order for reproducibility. Hidden entries beginning with a dot are included only when include_hidden is set to true.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/fs_list_directory.json",
+    "title": "Input for fs_list_directory",
+    "type": "object",
+    "properties": {
+      "path": {
+        "type": "string",
+        "description": "Absolute path of the directory to list."
+      },
+      "include_hidden": {
+        "type": "boolean",
+        "description": "Include entries whose names begin with a dot.",
+        "default": false
+      },
+      "pagination": {
+        "type": "object",
+        "title": "Pagination options",
+        "description": "Standard cursor-based pagination controls shared by every list endpoint in this server.",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation cursor returned in the previous page of results. Omit for the first page."
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "Number of items to return per page. The server clamps values above the maximum.",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 30
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "path"
+    ],
+    "additionalProperties": false
+  }
+}

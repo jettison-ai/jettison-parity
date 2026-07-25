@@ -1,0 +1,76 @@
+{
+  "name": "github_list_issues",
+  "description": "This tool allows you to list issues in a GitHub repository with optional filtering by state, labels, assignee, and creation date. Use this tool to answer questions like which issues are open, what is assigned to a person, or what was filed recently. Results are returned newest first and paginated; follow the cursor in the response to fetch subsequent pages. Pull requests are excluded from the results even though the underlying API historically returned them alongside issues.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/github_list_issues.json",
+    "title": "Input for github_list_issues",
+    "type": "object",
+    "properties": {
+      "repository": {
+        "type": "object",
+        "title": "Repository reference",
+        "description": "Fully qualified reference to a repository, consisting of the owner login and the repository name exactly as they appear in the URL.",
+        "properties": {
+          "owner": {
+            "type": "string",
+            "description": "Account owner of the repository. The name is not case sensitive."
+          },
+          "repo": {
+            "type": "string",
+            "description": "Name of the repository without the .git extension. The name is not case sensitive."
+          }
+        },
+        "required": [
+          "owner",
+          "repo"
+        ],
+        "additionalProperties": false
+      },
+      "state": {
+        "type": "string",
+        "enum": [
+          "open",
+          "closed",
+          "all"
+        ],
+        "description": "Indicates the state of the issues to return.",
+        "default": "open"
+      },
+      "labels": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Only return issues carrying every one of these labels."
+      },
+      "assignee": {
+        "type": "string",
+        "description": "Filter by assignee login. Use the literal string none for unassigned issues."
+      },
+      "pagination": {
+        "type": "object",
+        "title": "Pagination options",
+        "description": "Standard cursor-based pagination controls shared by every list endpoint in this server.",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation cursor returned in the previous page of results. Omit for the first page."
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "Number of items to return per page. The server clamps values above the maximum.",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 30
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "repository"
+    ],
+    "additionalProperties": false
+  }
+}

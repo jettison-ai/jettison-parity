@@ -1,0 +1,25 @@
+{
+  "name": "pg_explain_query",
+  "description": "This tool allows you to obtain the PostgreSQL execution plan for a SQL statement using EXPLAIN, optionally with ANALYZE to run the statement and report actual timings. Use this tool when investigating slow queries. ANALYZE executes the statement, so it is only permitted for read-only statements, mirroring the guard on pg_run_query. Plans are returned in JSON format for reliable parsing.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/pg_explain_query.json",
+    "title": "Input for pg_explain_query",
+    "type": "object",
+    "properties": {
+      "sql": {
+        "type": "string",
+        "description": "The SQL statement to explain."
+      },
+      "analyze": {
+        "type": "boolean",
+        "description": "Actually execute the statement and include real timing and row counts.",
+        "default": false
+      }
+    },
+    "required": [
+      "sql"
+    ],
+    "additionalProperties": false
+  }
+}

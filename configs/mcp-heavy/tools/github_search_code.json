@@ -1,0 +1,39 @@
+{
+  "name": "github_search_code",
+  "description": "This tool allows you to search for code across GitHub repositories using the code search syntax. Use this tool to locate where a symbol, string, or filename appears. Search scope can be restricted with qualifiers such as repo:, org:, path:, and language:. Note that code search only indexes the default branch of each repository and files smaller than 384 KB, so absence of a result is not proof the code does not exist.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/github_search_code.json",
+    "title": "Input for github_search_code",
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "The search keywords plus any qualifiers, e.g. octocat in:file extension:rb repo:octocat/hello-world."
+      },
+      "pagination": {
+        "type": "object",
+        "title": "Pagination options",
+        "description": "Standard cursor-based pagination controls shared by every list endpoint in this server.",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation cursor returned in the previous page of results. Omit for the first page."
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "Number of items to return per page. The server clamps values above the maximum.",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 30
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "query"
+    ],
+    "additionalProperties": false
+  }
+}

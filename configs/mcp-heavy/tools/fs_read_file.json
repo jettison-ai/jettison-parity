@@ -1,0 +1,35 @@
+{
+  "name": "fs_read_file",
+  "description": "This tool allows you to read the complete contents of a file from the local filesystem as UTF-8 text. Use this tool whenever the user asks what is in a file or when you need file contents to complete a task. Access is restricted to the directories the server was launched with; attempts to read outside the sandbox fail with a permission error. Very large files are truncated at 2 MB and the response notes the truncation so you never mistake a prefix for the whole file.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/fs_read_file.json",
+    "title": "Input for fs_read_file",
+    "type": "object",
+    "properties": {
+      "path": {
+        "type": "string",
+        "description": "Absolute path of the file to read, e.g. /workspace/app/config.yaml."
+      },
+      "encoding": {
+        "type": "string",
+        "enum": [
+          "utf-8",
+          "latin-1",
+          "utf-16"
+        ],
+        "description": "Text encoding used to decode the file bytes.",
+        "default": "utf-8"
+      }
+    },
+    "required": [
+      "path"
+    ],
+    "additionalProperties": false,
+    "examples": [
+      {
+        "path": "/workspace/app/config.yaml"
+      }
+    ]
+  }
+}

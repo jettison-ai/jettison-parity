@@ -1,0 +1,69 @@
+{
+  "name": "github_create_issue",
+  "description": "This tool allows you to create a new issue in a GitHub repository. Use this tool whenever the user asks to file, open, or report an issue, a bug, a feature request, or a task in a repository they have write access to. The issue is created via the REST API v3 and the call returns the full issue object including its number, html_url, and node_id. Note that issues are not the same as pull requests; to open a pull request use the dedicated pull request tool instead. If the repository has issues disabled the call fails with HTTP 410 Gone.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/github_create_issue.json",
+    "title": "Input for github_create_issue",
+    "type": "object",
+    "properties": {
+      "repository": {
+        "type": "object",
+        "title": "Repository reference",
+        "description": "Fully qualified reference to a repository, consisting of the owner login and the repository name exactly as they appear in the URL.",
+        "properties": {
+          "owner": {
+            "type": "string",
+            "description": "Account owner of the repository. The name is not case sensitive."
+          },
+          "repo": {
+            "type": "string",
+            "description": "Name of the repository without the .git extension. The name is not case sensitive."
+          }
+        },
+        "required": [
+          "owner",
+          "repo"
+        ],
+        "additionalProperties": false
+      },
+      "title": {
+        "type": "string",
+        "description": "The title of the issue. Keep it short and descriptive; details belong in the body."
+      },
+      "body": {
+        "type": "string",
+        "description": "The contents of the issue in GitHub-flavored Markdown. Supports task lists, mentions, and issue references."
+      },
+      "labels": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Labels to associate with this issue. Only users with push access can set labels; they are silently dropped otherwise."
+      },
+      "assignees": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Logins for users to assign to this issue. Only users with push access can set assignees."
+      }
+    },
+    "required": [
+      "repository",
+      "title"
+    ],
+    "additionalProperties": false,
+    "examples": [
+      {
+        "repository": {
+          "owner": "octocat",
+          "repo": "hello-world"
+        },
+        "title": "Found a bug",
+        "body": "I am having a problem with this."
+      }
+    ]
+  }
+}

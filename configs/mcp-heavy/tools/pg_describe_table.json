@@ -1,0 +1,25 @@
+{
+  "name": "pg_describe_table",
+  "description": "This tool allows you to describe a PostgreSQL table: its columns with types and nullability, primary key, foreign keys, indexes, and any check constraints. Use this tool before writing queries against a table you have not seen in this session so that column names in your SQL are exact. The description reflects the current committed schema; uncommitted DDL from other sessions is not visible.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/pg_describe_table.json",
+    "title": "Input for pg_describe_table",
+    "type": "object",
+    "properties": {
+      "schema": {
+        "type": "string",
+        "description": "Schema containing the table.",
+        "default": "public"
+      },
+      "table": {
+        "type": "string",
+        "description": "Name of the table to describe."
+      }
+    },
+    "required": [
+      "table"
+    ],
+    "additionalProperties": false
+  }
+}

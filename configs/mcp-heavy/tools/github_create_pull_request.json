@@ -1,0 +1,60 @@
+{
+  "name": "github_create_pull_request",
+  "description": "This tool allows you to open a pull request between two branches of a GitHub repository. Use this tool after pushing a branch when the user wants their changes reviewed or merged. The head branch must already exist on the remote; this tool does not push commits. Draft pull requests are supported and are the safer default when the change is still in progress. The response contains the pull request number and html_url which you should surface back to the user.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/github_create_pull_request.json",
+    "title": "Input for github_create_pull_request",
+    "type": "object",
+    "properties": {
+      "repository": {
+        "type": "object",
+        "title": "Repository reference",
+        "description": "Fully qualified reference to a repository, consisting of the owner login and the repository name exactly as they appear in the URL.",
+        "properties": {
+          "owner": {
+            "type": "string",
+            "description": "Account owner of the repository. The name is not case sensitive."
+          },
+          "repo": {
+            "type": "string",
+            "description": "Name of the repository without the .git extension. The name is not case sensitive."
+          }
+        },
+        "required": [
+          "owner",
+          "repo"
+        ],
+        "additionalProperties": false
+      },
+      "title": {
+        "type": "string",
+        "description": "The title of the new pull request."
+      },
+      "head": {
+        "type": "string",
+        "description": "The name of the branch where your changes are implemented."
+      },
+      "base": {
+        "type": "string",
+        "description": "The name of the branch you want the changes pulled into, usually the default branch."
+      },
+      "body": {
+        "type": "string",
+        "description": "The contents of the pull request description in Markdown."
+      },
+      "draft": {
+        "type": "boolean",
+        "description": "When true, creates a draft pull request that cannot be merged until marked ready.",
+        "default": false
+      }
+    },
+    "required": [
+      "repository",
+      "title",
+      "head",
+      "base"
+    ],
+    "additionalProperties": false
+  }
+}

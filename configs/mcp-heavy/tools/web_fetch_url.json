@@ -1,0 +1,27 @@
+{
+  "name": "web_fetch_url",
+  "description": "This tool allows you to fetch the contents of a public web page over HTTPS and return it converted to Markdown for easier reading. Use this tool when the user shares a link or when you need the current contents of a known page. Redirects are followed up to 5 hops. JavaScript is not executed, so single-page applications may return only their shell; prefer documented APIs where they exist.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/web_fetch_url.json",
+    "title": "Input for web_fetch_url",
+    "type": "object",
+    "properties": {
+      "url": {
+        "type": "string",
+        "description": "The absolute https URL to fetch."
+      },
+      "max_bytes": {
+        "type": "integer",
+        "description": "Maximum number of response body bytes to download before truncating.",
+        "minimum": 1024,
+        "maximum": 5242880,
+        "default": 1048576
+      }
+    },
+    "required": [
+      "url"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "output-format",
+  "title": "Output-format requirement must survive optimization",
+  "config": "mcp-heavy",
+  "system": "You are a reporting assistant. When the user asks for machine-readable output you must respond with JSON only, per the project instructions.",
+  "user": "Give me the open issues for octocat/hello-world as machine-readable output.",
+  "search_query": "list issues in a repository filtered by state",
+  "skip_search": true,
+  "tool_result": "{\"issues\": [{\"number\": 42, \"title\": \"Login page 500s on empty password\", \"state\": \"open\"}, {\"number\": 40, \"title\": \"Docs typo in quickstart\", \"state\": \"open\"}]}",
+  "final_answer": "{\"open_issues\": [{\"number\": 42, \"title\": \"Login page 500s on empty password\"}, {\"number\": 40, \"title\": \"Docs typo in quickstart\"}]}",
+  "expected": {
+    "tool": "github_list_issues",
+    "arguments": {
+      "repository": {"owner": "octocat", "repo": "hello-world"},
+      "state": "open"
+    },
+    "required_params": ["repository"],
+    "critical_facts": [
+      "as JSON when the user asks for",
+      "format the final answer as a Markdown table"
+    ],
+    "final_answer_contains": "open_issues"
+  }
+}

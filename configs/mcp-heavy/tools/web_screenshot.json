@@ -1,0 +1,34 @@
+{
+  "name": "web_screenshot",
+  "description": "This tool allows you to capture a full-page PNG screenshot of a public web page rendered in a headless browser, returned as a base64 data URI. Use this tool when layout or visual appearance matters, such as verifying a rendering bug. Rendering waits for network idle up to a 20 second budget. The viewport defaults to 1280x800 and can be adjusted for responsive testing.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/web_screenshot.json",
+    "title": "Input for web_screenshot",
+    "type": "object",
+    "properties": {
+      "url": {
+        "type": "string",
+        "description": "The absolute https URL to render."
+      },
+      "viewport_width": {
+        "type": "integer",
+        "description": "Viewport width in CSS pixels.",
+        "minimum": 320,
+        "maximum": 3840,
+        "default": 1280
+      },
+      "viewport_height": {
+        "type": "integer",
+        "description": "Viewport height in CSS pixels.",
+        "minimum": 320,
+        "maximum": 2160,
+        "default": 800
+      }
+    },
+    "required": [
+      "url"
+    ],
+    "additionalProperties": false
+  }
+}

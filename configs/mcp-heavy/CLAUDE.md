@@ -1,0 +1,43 @@
+# Project instructions
+
+## Working agreements
+
+Always run the linter before proposing a commit. The CI pipeline treats lint
+warnings as errors, and a red pipeline blocks everyone else's merges until it
+is fixed.
+
+Never commit directly to the main branch. All changes, including one-line
+fixes, must go through a pull request with at least one approval from a code
+owner.
+
+Database migrations are irreversible in production. Never run a migration
+against the production database without an approved change ticket; use the
+staging replica at db-staging.internal.example.com for any exploratory work.
+
+Uploads are limited to 512 MB per file. Requests above that limit must be
+rejected client-side before any bytes are transferred, because the ingest
+gateway bills us for rejected payloads too.
+
+Secrets and credentials must never appear in code, logs, or tool output. Use
+the environment variables documented in ops/runbooks/secrets.md and redact
+tokens from any command output you display.
+
+## Code style
+
+We use four-space indentation in Python and two-space indentation in
+TypeScript. Prefer explicit imports over wildcard imports, and keep modules
+under five hundred lines where practical.
+
+Public functions require docstrings describing parameters and return values.
+Internal helpers may omit docstrings when the name and types make the
+behavior obvious.
+
+When responding with analysis results, format the final answer as a Markdown
+table when the user asks for a comparison, and as JSON when the user asks for
+machine-readable output.
+
+## Deploy notes
+
+Deploys go out through the deploy skill only. Never invoke kubectl apply by
+hand against the production cluster; the skill records an audit entry that
+manual commands skip.

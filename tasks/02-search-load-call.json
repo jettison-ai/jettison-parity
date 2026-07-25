@@ -1,0 +1,21 @@
+{
+  "id": "search-load-call",
+  "title": "Search -> load -> call chain through the capability registry",
+  "config": "mcp-heavy",
+  "system": "You are a database assistant. Complete the user's request using the available tools.",
+  "user": "Show me the columns of the orders table.",
+  "search_query": "describe a database table columns types",
+  "skip_search": false,
+  "tool_result": "{\"schema\": \"public\", \"table\": \"orders\", \"columns\": [{\"name\": \"id\", \"type\": \"bigint\", \"nullable\": false}, {\"name\": \"total_cents\", \"type\": \"integer\", \"nullable\": false}, {\"name\": \"created_at\", \"type\": \"timestamptz\", \"nullable\": false}]}",
+  "final_answer": "DONE: public.orders has columns id (bigint), total_cents (integer), created_at (timestamptz).",
+  "expected": {
+    "tool": "pg_describe_table",
+    "arguments": {"table": "orders", "schema": "public"},
+    "required_params": ["table"],
+    "critical_facts": [
+      "Never run a migration",
+      "db-staging.internal.example.com"
+    ],
+    "final_answer_contains": "DONE"
+  }
+}

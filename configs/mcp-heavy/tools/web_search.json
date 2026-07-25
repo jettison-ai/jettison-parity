@@ -1,0 +1,45 @@
+{
+  "name": "web_search",
+  "description": "This tool allows you to run a web search and receive a ranked list of results with titles, URLs, and snippets. Use this tool for questions about current events or facts likely to have changed since your training data. Compose specific queries with distinguishing terms; broad single-word queries return noisy results. Follow up with web_fetch_url to read a promising result in full before citing it.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/web_search.json",
+    "title": "Input for web_search",
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "The search query."
+      },
+      "recency_days": {
+        "type": "integer",
+        "description": "Restrict results to pages first seen within this many days.",
+        "minimum": 1,
+        "maximum": 365
+      },
+      "pagination": {
+        "type": "object",
+        "title": "Pagination options",
+        "description": "Standard cursor-based pagination controls shared by every list endpoint in this server.",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation cursor returned in the previous page of results. Omit for the first page."
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "Number of items to return per page. The server clamps values above the maximum.",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 30
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "query"
+    ],
+    "additionalProperties": false
+  }
+}

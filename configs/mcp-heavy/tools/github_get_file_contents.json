@@ -1,0 +1,45 @@
+{
+  "name": "github_get_file_contents",
+  "description": "This tool allows you to read the contents of a file from a GitHub repository at a given ref without cloning it. Use this tool for quick inspection of a single remote file. Contents are returned base64 decoded as UTF-8 text; binary files are rejected. Files larger than 1 MB must be fetched via the raw download URL instead, which this tool reports in its error message.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/github_get_file_contents.json",
+    "title": "Input for github_get_file_contents",
+    "type": "object",
+    "properties": {
+      "repository": {
+        "type": "object",
+        "title": "Repository reference",
+        "description": "Fully qualified reference to a repository, consisting of the owner login and the repository name exactly as they appear in the URL.",
+        "properties": {
+          "owner": {
+            "type": "string",
+            "description": "Account owner of the repository. The name is not case sensitive."
+          },
+          "repo": {
+            "type": "string",
+            "description": "Name of the repository without the .git extension. The name is not case sensitive."
+          }
+        },
+        "required": [
+          "owner",
+          "repo"
+        ],
+        "additionalProperties": false
+      },
+      "path": {
+        "type": "string",
+        "description": "Path to the file relative to the repository root, e.g. src/main.py."
+      },
+      "ref": {
+        "type": "string",
+        "description": "The name of the commit, branch, or tag. Defaults to the repository default branch."
+      }
+    },
+    "required": [
+      "repository",
+      "path"
+    ],
+    "additionalProperties": false
+  }
+}

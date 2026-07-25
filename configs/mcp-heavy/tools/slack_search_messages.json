@@ -1,0 +1,48 @@
+{
+  "name": "slack_search_messages",
+  "description": "This tool allows you to search messages across the Slack workspace using the standard search modifiers such as from:, in:, before:, and after:. Use this tool when the user asks to find a past conversation and you do not know which channel it is in. Search covers only channels the searching user can access, and very recent messages may take up to a few minutes to appear in the index.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/slack_search_messages.json",
+    "title": "Input for slack_search_messages",
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "Search query with optional modifiers, e.g. deploy failure in:#incidents after:2026-01-01."
+      },
+      "sort": {
+        "type": "string",
+        "enum": [
+          "score",
+          "timestamp"
+        ],
+        "description": "Order results by relevance score or by recency.",
+        "default": "score"
+      },
+      "pagination": {
+        "type": "object",
+        "title": "Pagination options",
+        "description": "Standard cursor-based pagination controls shared by every list endpoint in this server.",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation cursor returned in the previous page of results. Omit for the first page."
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "Number of items to return per page. The server clamps values above the maximum.",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 30
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required": [
+      "query"
+    ],
+    "additionalProperties": false
+  }
+}

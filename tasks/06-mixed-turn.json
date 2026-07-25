@@ -1,0 +1,30 @@
+{
+  "id": "mixed-turn",
+  "title": "Mixed turn: registry meta-call alongside a client-owned tool call",
+  "config": "mcp-heavy",
+  "system": "You are an incident assistant. Work quickly and in parallel where possible.",
+  "user": "Post 'deploy 2026-07-1 rolled back' to the incidents channel and read the current replica count from /workspace/k8s/replicas.txt.",
+  "search_query": "post a message to a channel",
+  "skip_search": true,
+  "mixed_turn": true,
+  "tool_result": "{\"ok\": true, \"channel\": \"C0INCIDENTS\", \"ts\": \"1719430001.000100\"}",
+  "also_call": {
+    "tool": "fs_read_file",
+    "arguments": {"path": "/workspace/k8s/replicas.txt"},
+    "result": "replicas: 6"
+  },
+  "final_answer": "DONE: posted the rollback notice to the incidents channel and the current replica count is 6.",
+  "expected": {
+    "tool": "slack_post_message",
+    "arguments": {
+      "channel": {"channel_name": "incidents"},
+      "text": "deploy 2026-07-1 rolled back"
+    },
+    "required_params": ["channel", "text"],
+    "critical_facts": [
+      "every 30 minutes",
+      "second responder"
+    ],
+    "final_answer_contains": "DONE"
+  }
+}

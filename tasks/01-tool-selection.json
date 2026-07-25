@@ -1,0 +1,21 @@
+{
+  "id": "tool-selection",
+  "title": "Correct tool selection among 20 tools",
+  "config": "mcp-heavy",
+  "system": "You are a project assistant. Complete the user's request using the available tools.",
+  "user": "What is in the file /workspace/app/config.yaml?",
+  "search_query": "read a file from the local filesystem",
+  "skip_search": true,
+  "tool_result": "database:\n  host: db-staging.internal.example.com\n  pool_size: 20\n",
+  "final_answer": "DONE: /workspace/app/config.yaml configures the database host db-staging.internal.example.com with a pool size of 20.",
+  "expected": {
+    "tool": "fs_read_file",
+    "arguments": {"path": "/workspace/app/config.yaml"},
+    "required_params": ["path"],
+    "critical_facts": [
+      "Never commit directly to the main branch",
+      "512 MB"
+    ],
+    "final_answer_contains": "DONE"
+  }
+}

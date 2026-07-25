@@ -1,0 +1,42 @@
+{
+  "name": "pg_list_tables",
+  "description": "This tool allows you to list the tables visible to the connected PostgreSQL role, including their schema, estimated row count, and total on-disk size. Use this tool to orient yourself in an unfamiliar database before writing queries. System catalogs are excluded unless include_system is true. Row counts come from planner statistics and can be stale; run an explicit count query when exactness matters.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/pg_list_tables.json",
+    "title": "Input for pg_list_tables",
+    "type": "object",
+    "properties": {
+      "schema": {
+        "type": "string",
+        "description": "Restrict the listing to a single schema, e.g. public."
+      },
+      "include_system": {
+        "type": "boolean",
+        "description": "Include pg_catalog and information_schema tables.",
+        "default": false
+      },
+      "pagination": {
+        "type": "object",
+        "title": "Pagination options",
+        "description": "Standard cursor-based pagination controls shared by every list endpoint in this server.",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation cursor returned in the previous page of results. Omit for the first page."
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "Number of items to return per page. The server clamps values above the maximum.",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 30
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  }
+}

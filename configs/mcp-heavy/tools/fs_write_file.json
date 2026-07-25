@@ -1,0 +1,30 @@
+{
+  "name": "fs_write_file",
+  "description": "This tool allows you to create a new file or completely overwrite an existing file on the local filesystem with the provided UTF-8 content. Use with caution: overwriting is not reversible and there is no automatic backup. Parent directories are created automatically when create_dirs is true. Access is restricted to the directories the server was launched with, and writes outside the sandbox fail with a permission error.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/fs_write_file.json",
+    "title": "Input for fs_write_file",
+    "type": "object",
+    "properties": {
+      "path": {
+        "type": "string",
+        "description": "Absolute path of the file to write."
+      },
+      "content": {
+        "type": "string",
+        "description": "Full new content of the file. The previous content is discarded entirely."
+      },
+      "create_dirs": {
+        "type": "boolean",
+        "description": "Create missing parent directories instead of failing.",
+        "default": false
+      }
+    },
+    "required": [
+      "path",
+      "content"
+    ],
+    "additionalProperties": false
+  }
+}

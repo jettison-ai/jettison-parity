@@ -1,0 +1,21 @@
+{
+  "id": "numeric-constraint",
+  "title": "Critical numeric constraint must survive optimization",
+  "config": "mcp-heavy",
+  "system": "You are an upload validator. The hard upload limit is defined in the project instructions; apply it exactly, and reject any file over the limit before transfer.",
+  "user": "List /workspace/uploads and tell me which files are over the upload limit.",
+  "search_query": "list directory entries with sizes",
+  "skip_search": true,
+  "tool_result": "[{\"name\": \"video-master.mov\", \"size_bytes\": 734003200}, {\"name\": \"slides.pdf\", \"size_bytes\": 18874368}]",
+  "final_answer": "DONE: video-master.mov is 700 MB, which exceeds the 512 MB per-file upload limit and must be rejected client-side; slides.pdf (18 MB) is fine.",
+  "expected": {
+    "tool": "fs_list_directory",
+    "arguments": {"path": "/workspace/uploads"},
+    "required_params": ["path"],
+    "critical_facts": [
+      "512 MB per file",
+      "rejected client-side before any bytes are transferred"
+    ],
+    "final_answer_contains": "512 MB"
+  }
+}

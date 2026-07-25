@@ -1,0 +1,46 @@
+{
+  "name": "slack_post_message",
+  "description": "This tool allows you to post a message to a Slack channel or direct message conversation as the configured bot user. Use this tool when the user asks to notify, announce, or reply in Slack. Markdown-style mrkdwn formatting is supported including code blocks and mentions. The bot must already be a member of private channels; posting to a private channel it has not joined fails with not_in_channel.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/slack_post_message.json",
+    "title": "Input for slack_post_message",
+    "type": "object",
+    "properties": {
+      "channel": {
+        "type": "object",
+        "title": "Channel reference",
+        "description": "Reference to a Slack conversation. Provide either the channel id (preferred, stable across renames) or the human-readable channel name.",
+        "properties": {
+          "channel_id": {
+            "type": "string",
+            "description": "The unique conversation id, e.g. C0123456789. Stable across channel renames."
+          },
+          "channel_name": {
+            "type": "string",
+            "description": "Human readable channel name without the leading hash sign."
+          }
+        },
+        "additionalProperties": false
+      },
+      "text": {
+        "type": "string",
+        "description": "Message text in Slack mrkdwn. Falls back to plain text where formatting is unsupported."
+      },
+      "thread_ts": {
+        "type": "string",
+        "description": "Timestamp of a parent message; when provided the message is posted as a threaded reply."
+      },
+      "unfurl_links": {
+        "type": "boolean",
+        "description": "Allow Slack to unfurl URLs in the message.",
+        "default": true
+      }
+    },
+    "required": [
+      "channel",
+      "text"
+    ],
+    "additionalProperties": false
+  }
+}

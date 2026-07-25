@@ -1,0 +1,34 @@
+{
+  "name": "pg_run_query",
+  "description": "This tool allows you to execute a read-only SQL query against the configured PostgreSQL database and return the resulting rows as JSON. Use this tool for SELECT statements and introspection queries. Statements that modify data (INSERT, UPDATE, DELETE, DDL) are rejected by a server-side guard; use the dedicated migration tooling for schema changes. Queries are cancelled after the statement timeout of 30 seconds and results are capped at 1000 rows.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/pg_run_query.json",
+    "title": "Input for pg_run_query",
+    "type": "object",
+    "properties": {
+      "sql": {
+        "type": "string",
+        "description": "The SQL text to execute. Must be a single read-only statement."
+      },
+      "params": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Positional query parameters substituted for $1, $2, and so on. Always use parameters instead of string interpolation."
+      },
+      "row_limit": {
+        "type": "integer",
+        "description": "Maximum number of rows to return.",
+        "minimum": 1,
+        "maximum": 1000,
+        "default": 100
+      }
+    },
+    "required": [
+      "sql"
+    ],
+    "additionalProperties": false
+  }
+}

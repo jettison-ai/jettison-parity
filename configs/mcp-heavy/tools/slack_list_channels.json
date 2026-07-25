@@ -1,0 +1,38 @@
+{
+  "name": "slack_list_channels",
+  "description": "This tool allows you to list the channels in the Slack workspace that the bot user can see, including each channel's id, name, topic, and member count. Use this tool to resolve a human channel name to its stable channel id before calling other Slack tools. Archived channels are excluded unless include_archived is true.",
+  "input_schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://tools.example.com/schemas/slack_list_channels.json",
+    "title": "Input for slack_list_channels",
+    "type": "object",
+    "properties": {
+      "include_archived": {
+        "type": "boolean",
+        "description": "Include archived channels in the listing.",
+        "default": false
+      },
+      "pagination": {
+        "type": "object",
+        "title": "Pagination options",
+        "description": "Standard cursor-based pagination controls shared by every list endpoint in this server.",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Opaque continuation cursor returned in the previous page of results. Omit for the first page."
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "Number of items to return per page. The server clamps values above the maximum.",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 30
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  }
+}
