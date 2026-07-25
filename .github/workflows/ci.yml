@@ -55,14 +55,44 @@ jobs:
         with:
           path: jettison-parity
 
+      # The harness imports `jettison`, so it cannot test anything without
+      # this checkout. A run-time GITHUB_TOKEN is scoped to THIS repository
+      # only: while jettison is private, the clone fails with a bare
+      # "Repository not found", which reads like a typo rather than a
+      # permissions problem. Catch it and say what to do instead.
       - name: Checkout jettison
+        id: checkout_jettison
+        continue-on-error: true
         uses: actions/checkout@v4
         with:
           repository: ${{ env.JETTISON_REPO }}
           ref: ${{ env.JETTISON_REF }}
           path: jettison
-          # For a private jettison repo, add a read-scoped token:
+          # Uncomment once the secret exists (see the gate step below):
           # token: ${{ secrets.JETTISON_TOKEN }}
+
+      - name: Explain a failed jettison checkout
+        if: steps.checkout_jettison.outcome == 'failure'
+        run: |
+          echo "::error title=Cannot reach ${JETTISON_REPO}::The harness imports jettison and cannot run without it."
+          cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
+          ## Could not check out `jettison`
+
+          This is an access problem, not a missing repository. A workflow's
+          default `GITHUB_TOKEN` can only read the repository it runs in, so a
+          **private** `jettison-ai/jettison` is invisible here and git reports
+          it as "not found".
+
+          Fix it either way:
+
+          1. **Make `jettison-ai/jettison` public** (planned at launch) — this
+             workflow then passes with no further change, or
+          2. **Add a token**: create a fine-grained PAT or GitHub App token with
+             `contents: read` on `jettison-ai/jettison`, save it as the secret
+             `JETTISON_TOKEN`, and uncomment the `token:` line in
+             `.github/workflows/ci.yml`.
+          EOF
+          exit 1
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
