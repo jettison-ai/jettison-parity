@@ -4,3 +4,5 @@ __pycache__/
 .venv/
 dist/
 results.json
+results-*.json
+parity-results.json

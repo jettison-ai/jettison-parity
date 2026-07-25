@@ -1,0 +1,170 @@
+name: Bug report
+description: A benchmark family crashes, produces a wrong number, or stops being reproducible.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This harness is a measurement instrument, so "the number looks wrong" and
+        "two runs disagree" are both first-class bugs — please file them.
+
+        Before filing, confirm you have **both repos installed as siblings**
+        (`pip install -e ../jettison` then `pip install -e ".[dev]"`). A stale or
+        PyPI-installed `jettison` is the most common cause of surprising numbers.
+
+        Security issues do **not** go here — see
+        [SECURITY.md](../blob/main/SECURITY.md) and use a private advisory.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of problem is it?
+      options:
+        - Crash / traceback
+        - Wrong or implausible number
+        - Nondeterminism (two identical runs disagree)
+        - A number is missing its measured/estimated label
+        - Task-parity reports a regression that isn't real (false positive)
+        - Task-parity misses a real regression (false negative)
+        - CLI / flags / exit codes
+        - Docs
+    validations:
+      required: true
+
+  - type: dropdown
+    id: family
+    attributes:
+      label: Benchmark family
+      options:
+        - "standing — standing-context tokens"
+        - "parity — task parity"
+        - "cost — session cost"
+        - "rct — holdout RCT"
+        - "all"
+        - "not family-specific (fixtures, middleware, CLI)"
+    validations:
+      required: true
+
+  - type: input
+    id: config
+    attributes:
+      label: Fixture config
+      description: |
+        Which config directory? A number without its fixture is meaningless.
+        If it's your own config, say so and describe its shape.
+      placeholder: "configs/mcp-heavy"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: models_client
+    attributes:
+      label: Which client's setup does this config model?
+      description: |
+        Fixture configs stand in for real client setups (`configs/mcp-heavy`
+        models an MCP-heavy Claude Code install; `configs/openclaw-like` models
+        an OpenClaw-style one). Helps us tell fixture bugs from harness bugs.
+      options:
+        - claude (Claude Code)
+        - codex
+        - cursor
+        - cline
+        - opencode
+        - openclaw
+        - not modelled on a specific client
+    validations:
+      required: false
+
+  - type: dropdown
+    id: middleware
+    attributes:
+      label: Middleware under test
+      options:
+        - "jettison (default)"
+        - "none (identity baseline)"
+        - "HTTPProxyMiddleware / my own optimizer"
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Exact command
+      render: shell
+      placeholder: |
+        parity run --family all --config configs/mcp-heavy --json --out results.json
+        echo "exit: $?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: What happened, and what did you expect?
+      placeholder: |
+        Expected: standing_context total_saved > 0 for configs/openclaw-like.
+        Actual: total_saved is 0 and the label flipped to "estimated".
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: |
+        The `--json` output is ideal (the tables lose precision). Trim to the
+        relevant family if it's large, and include the `bundle_hash` line.
+      render: json
+    validations:
+      required: true
+
+  - type: textarea
+    id: determinism
+    attributes:
+      label: "Reproducibility check"
+      description: |
+        Run it twice to the same shape and compare. Paste the result — a diff is
+        the single most useful thing for a nondeterminism report.
+      render: shell
+      placeholder: |
+        parity run --family all --config configs/mcp-heavy --json --out a.json
+        parity run --family all --config configs/mcp-heavy --json --out b.json
+        diff a.json b.json && echo IDENTICAL
+    validations:
+      required: false
+
+  - type: input
+    id: python-version
+    attributes:
+      label: Python version
+      description: "`python --version`. This package declares 3.11+; CI runs 3.11/3.12/3.13."
+      placeholder: "3.13.13"
+    validations:
+      required: true
+
+  - type: input
+    id: jettison-version
+    attributes:
+      label: jettison version / commit
+      description: |
+        `jettison --version` and, if installed editable, the commit SHA of the
+        jettison checkout. Benchmark numbers are meaningless without it.
+      placeholder: "0.1.0 (editable, jettison@abc1234)"
+    validations:
+      required: true
+
+  - type: input
+    id: parity-version
+    attributes:
+      label: jettison-parity commit
+      placeholder: "def5678"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: "macOS 15.5 / Ubuntu 24.04"
+    validations:
+      required: true

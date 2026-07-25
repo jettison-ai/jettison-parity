@@ -1,0 +1,15 @@
+Jettison Parity Harness
+Copyright 2026 Saurabh Yergattikar
+
+Licensed under the Apache License, Version 2.0.
+
+This harness benchmarks context-optimization middleware. It imports Jettison
+(https://github.com/jettison-ai/jettison), which in turn builds on components
+derived from Headroom (https://github.com/headroomlabs-ai/headroom), also
+licensed under Apache 2.0. Neither project is affiliated with or endorsed by
+the other.
+
+The benchmark configurations under configs/ and the task definitions under
+tasks/ are original work authored for this harness. They are synthetic
+fixtures modeled on real-world agent setups; they contain no proprietary or
+third-party content.

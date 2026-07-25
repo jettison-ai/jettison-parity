@@ -1,0 +1,167 @@
+# CI for jettison-parity.
+#
+# The harness is a measurement instrument, so CI checks two things:
+#   1. the test suite passes, and
+#   2. the benchmark families still run end to end and stay deterministic
+#      (byte-identical results across two runs in the same job).
+#
+# Nothing here touches the network at runtime beyond PyPI installs: the whole
+# suite is offline by design (no clocks, no timestamps in output, no model
+# calls — the "model" is a scripted policy).
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      jettison_ref:
+        description: "Ref of jettison-ai/jettison to benchmark"
+        required: false
+        default: main
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # The harness has no vendored copy of the optimizer: parity.fixtures,
+  # parity.middleware and parity.benchmarks.task_parity all `import jettison`.
+  # It is therefore checked out and installed as a sibling on every run.
+  # This repository must be readable by the workflow's GITHUB_TOKEN — public
+  # is fine; for a private jettison repo, set `token:` on the checkout step.
+  JETTISON_REPO: jettison-ai/jettison
+  JETTISON_REF: ${{ github.event.inputs.jettison_ref || 'main' }}
+
+jobs:
+  test:
+    name: py${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      # Every cell reports; a break on one interpreter must not hide the others.
+      fail-fast: false
+      matrix:
+        # Floors match jettison's: the harness imports it, so anyone who can
+        # run the optimizer must be able to run its benchmarks.
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout jettison-parity (this repo)
+        uses: actions/checkout@v4
+        with:
+          path: jettison-parity
+
+      - name: Checkout jettison
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.JETTISON_REPO }}
+          ref: ${{ env.JETTISON_REF }}
+          path: jettison
+          # For a private jettison repo, add a read-scoped token:
+          # token: ${{ secrets.JETTISON_TOKEN }}
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            jettison-parity/pyproject.toml
+            jettison/pyproject.toml
+
+      - name: Install both packages (editable, sibling checkouts)
+        # jettison[runtime] is not needed: the harness only imports the pure
+        # parts (compiler, registry, proxy.rewrite/interceptor, verifier,
+        # tokens). Installing bare keeps the harness honest about which
+        # jettison surfaces it actually depends on — and keeps token counts
+        # on the documented estimator fallback path.
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ./jettison
+          python -m pip install -e "./jettison-parity[dev]"
+          python -c "import jettison, parity, pathlib; print('jettison from', pathlib.Path(jettison.__file__).parent)"
+
+      - name: Run tests
+        working-directory: jettison-parity
+        run: python -m pytest -q
+
+      # ---- harness sanity: the four families must actually run --------------
+
+      - name: parity --help
+        working-directory: jettison-parity
+        run: |
+          parity --help
+          parity run --help
+
+      - name: Run every family on both fixture configs
+        working-directory: jettison-parity
+        # `parity run` exits 2 when the task-parity family finds a regression,
+        # so a nonzero exit here is a real signal, not a flake.
+        run: |
+          parity run --family all --config configs/mcp-heavy    --json --out results-mcp-heavy.json
+          parity run --family all --config configs/openclaw-like --json --out results-openclaw-like.json
+
+      - name: Results are well-formed and every number is labeled
+        working-directory: jettison-parity
+        run: |
+          python - <<'PY'
+          import json, pathlib, sys
+
+          expected_families = {"standing_context", "task_parity", "session_cost", "holdout_rct"}
+          labels = {"measured", "estimated"}
+
+          for path in sorted(pathlib.Path(".").glob("results-*.json")):
+              data = json.loads(path.read_text())
+              missing = expected_families - set(data)
+              if missing:
+                  sys.exit(f"{path}: missing families {sorted(missing)}")
+
+              standing = data["standing_context"]
+              if standing["label"] not in labels:
+                  sys.exit(f"{path}: standing_context label {standing['label']!r} is not measured|estimated")
+              for row in standing["rows"]:
+                  if row["label"] not in labels:
+                      sys.exit(f"{path}: unlabeled standing row {row['category']!r}")
+
+              parity = data["task_parity"]
+              if not parity["tasks"]:
+                  sys.exit(f"{path}: task_parity ran zero tasks")
+              if parity["regressions"]:
+                  sys.exit(f"{path}: task-parity regressions: {parity['regressions']}")
+
+              rct = data["holdout_rct"]
+              if rct.get("synthetic") and "not evidence" not in rct["label"]:
+                  sys.exit(f"{path}: synthetic RCT output is not labeled as a demonstration")
+
+              print(
+                  f"{path}: ok — {len(parity['tasks'])} tasks, "
+                  f"standing {standing['total_before']:,} -> {standing['total_after']:,} "
+                  f"({standing['pct_saved']}%, {standing['label']})"
+              )
+          PY
+
+      - name: Output is byte-identical across runs (determinism gate)
+        working-directory: jettison-parity
+        # The honest-measurement rules promise no clocks and no unseeded
+        # randomness anywhere in the suite. This is that promise, enforced.
+        run: |
+          parity run --family all --config configs/mcp-heavy --json --out rerun-mcp-heavy.json
+          if ! cmp -s results-mcp-heavy.json rerun-mcp-heavy.json; then
+            echo "::error title=nondeterministic output::two identical runs produced different JSON"
+            diff -u results-mcp-heavy.json rerun-mcp-heavy.json | head -100
+            exit 1
+          fi
+          echo "ok: byte-identical across runs"
+
+      - name: Upload benchmark results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-results-py${{ matrix.python-version }}
+          path: jettison-parity/results-*.json
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,89 @@
+name: Feature request
+description: Propose a new benchmark family, fixture config, task, or middleware adapter.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The harness exists to answer two questions honestly: **how much does an
+        optimizer save**, and **does it change task outcomes**. Proposals are
+        easiest to accept when they make one of those two answers more rigorous,
+        harder to game, or applicable to more optimizers.
+
+        Adding a family or a fixture? Skim the "Adding a benchmark family" and
+        "Determinism rules" sections of
+        [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md) first.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What are you proposing?
+      options:
+        - A new benchmark family
+        - A new fixture config (a client setup we don't model yet)
+        - A new task for the task-parity family
+        - A new middleware adapter (scoring another optimizer)
+        - A change to how an existing number is computed
+        - A change to pricing / cache-tier modelling
+        - CLI / output format
+        - Docs
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: What question would this let someone answer?
+      description: |
+        Phrase it as a question a skeptical reader would ask about an optimizer.
+        "Does deferring tool schemas hurt first-touch latency?" is a good one.
+        "Add more benchmarks" is not.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed design
+      description: |
+        For a family: the entry point, the result dataclass fields, what counts
+        as a regression (if anything), and what the labels would be.
+        For a fixture: what real setup it models and where its shape comes from.
+        For a task: the tool that must be called, the required params, and the
+        critical facts that must survive.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Honest-measurement and determinism check
+      description: Tick what holds. Say below if you're unsure — that's fine.
+      options:
+        - label: "Offline: no network, no model calls, no API keys."
+        - label: "Deterministic: no clocks, no timestamps in output, no unseeded randomness; two runs produce byte-identical JSON."
+        - label: "No environment dependence: input is a committed fixture directory only — no $HOME, no installed clients, no locale-sensitive formatting."
+        - label: "Every number it produces carries a measured/estimated label, and aggregates take the weaker label."
+        - label: "It works for any middleware implementing `optimize_request`, not just jettison."
+        - label: "It cannot be gamed by an optimizer that detects it is being benchmarked."
+
+  - type: textarea
+    id: gaming
+    attributes:
+      label: How could an optimizer make this look good without being good?
+      description: |
+        The most valuable part of a benchmark proposal. Every metric is a target
+        eventually — tell us how you'd cheat this one, and what stops you.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: contribute
+    attributes:
+      label: Would you be willing to implement it?
+      options:
+        - "Yes, with review guidance"
+        - "Maybe"
+        - "No, just proposing"
+    validations:
+      required: false
