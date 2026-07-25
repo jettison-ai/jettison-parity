@@ -25,7 +25,7 @@ def test_run_all_json(tmp_path):
     )
     assert result.exit_code == 0, result.output
     data = json.loads(result.output)
-    assert set(data) == {"standing_context", "task_parity", "session_cost", "holdout_rct"}
+    assert set(data) == {"standing_context", "task_parity", "session_cost", "holdout_rct", "resident_context"}
     assert data["task_parity"]["regressions"] == []
     assert data["holdout_rct"]["label"].startswith("synthetic demonstration")
     assert json.loads(out.read_text()) == data

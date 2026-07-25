@@ -1,6 +1,6 @@
 """parity CLI: run the Parity Harness benchmark families.
 
-    parity run [--family standing|parity|cost|rct|all]
+    parity run [--family standing|parity|cost|rct|resident|all]
                [--middleware none|jettison]
                [--config PATH] [--tasks PATH]
                [--json] [--out PATH] [--turns N] [--seed N]
@@ -21,11 +21,17 @@ import click
 from rich.console import Console
 from rich.table import Table
 
-from parity.benchmarks import holdout_rct, session_cost, standing_context, task_parity
+from parity.benchmarks import (
+    holdout_rct,
+    resident_context,
+    session_cost,
+    standing_context,
+    task_parity,
+)
 from parity.fixtures import load_config
 from parity.middleware import MIDDLEWARE_NAMES, get_middleware
 
-FAMILIES = ("standing", "parity", "cost", "rct", "all")
+FAMILIES = ("standing", "parity", "cost", "rct", "resident", "all")
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_CONFIG = _REPO_ROOT / "configs" / "mcp-heavy"
@@ -87,6 +93,12 @@ def run(
 
     results: dict[str, dict] = {}
     exit_code = 0
+
+    if family in ("resident", "all"):
+        res = resident_context.run(turns=turns)
+        results["resident_context"] = res.to_dict()
+        if not json_out:
+            resident_context.render(res, console)
 
     if family in ("standing", "all"):
         if middleware_name == "jettison":
