@@ -1,13 +1,20 @@
 # jettison-parity — the Parity Harness
 
+[![parity](https://github.com/jettison-ai/jettison-parity/actions/workflows/ci.yml/badge.svg)](https://github.com/jettison-ai/jettison-parity/actions/workflows/ci.yml)
+[![tests](https://img.shields.io/badge/tests-29%20passing-brightgreen)](https://github.com/jettison-ai/jettison-parity/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
+
 A deterministic, offline benchmark suite for **agent token optimizers**.
 It answers the two questions any optimizer must answer together:
 
 1. **How many tokens/dollars does it save?**
 2. **Does it change task outcomes?** (the "parity" in Parity Harness)
 
-Built for [Jettison](../jettison), but the harness scores **any**
-middleware through a small adapter interface (see below).
+Built for [Jettison](https://github.com/jettison-ai/jettison), but the
+harness scores **any** middleware through a small adapter interface (see
+below). Every number published in Jettison's README that is not a live A/B
+comes from here, and is reproducible with one command.
 
 ## The four benchmark families
 

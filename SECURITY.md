@@ -11,7 +11,7 @@ Report it privately through GitHub Security Advisories:
 > (direct link: <https://github.com/jettison-ai/jettison-parity/security/advisories/new>)
 
 That opens a private thread visible only to maintainers. If you cannot use it,
-email **<MAINTAINER_EMAIL>** with `SECURITY` in the subject line.
+email **saurabh.ssy@gmail.com** with `SECURITY` in the subject line.
 
 Please include:
 
